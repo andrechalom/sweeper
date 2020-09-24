@@ -5,6 +5,7 @@ import "phaser";
 export default class Cell {
     private _isOpen = false;
     private _isBomb = false;
+    private _isFlagged = false;
     private _bombNeighbors = 0;
     sprite: Phaser.GameObjects.Sprite;
     // map: MapGenerator;
@@ -43,5 +44,13 @@ export default class Cell {
 
     get bombNeighbors(): number {
         return this._bombNeighbors;
+    }
+
+    get isFlagged(): boolean {
+        return this._isFlagged;
+    }
+
+    toggleFlagged(): void {
+        this._isFlagged = ! this._isFlagged;
     }
 }
