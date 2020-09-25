@@ -1,5 +1,5 @@
 import "phaser";
-import * as Utils from "./lib/utils";
+// import * as Utils from "./lib/Random";
 import NewGameScene from "./scenes/NewGameScene";
 
 const gameConfig = {

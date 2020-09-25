@@ -1,7 +1,7 @@
 import Layer from "./Layer";
 //import SpriteManager from "./SpriteManager";
 import Cell from "./Cell";
-import * as Utils from "./utils";
+import Random from "./Random";
 
 export default class Map {
     // constant traits
@@ -136,8 +136,8 @@ export default class Map {
                 return false;
             }
 
-            x = Math.floor(Utils.random() * (this._width - 1));
-            y = Math.floor(Utils.random() * (this._height - 1));
+            x = Math.floor(Random.get() * (this._width - 1));
+            y = Math.floor(Random.get() * (this._height - 1));
         } while (this.getCell(x, y).isBomb);
         return {x: x, y: y};
     }
@@ -150,6 +150,10 @@ export default class Map {
     }
     get bombs(): number {
         return this._bombs;
+    }
+
+    get openCells(): number {
+        return this.sumInEveryTile((x, y) => this.getCell(x, y).isOpen ? 1 : 0);
     }
 
     /**
@@ -203,6 +207,9 @@ export default class Map {
     chord(): void {
         this.inEveryTile((x, y) => {
             let cell = this.getCell(x, y);
+            if (!cell.isOpen) {
+                return;
+            }
             let bombNeighbors = cell.bombNeighbors;
             let flaggedNeighbors = this.sumInRegion(x, y, 1, (xx, yy) => {
                 return this.getCell(xx, yy).isFlagged ? 1 : 0;
