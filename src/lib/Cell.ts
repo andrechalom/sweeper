@@ -46,6 +46,10 @@ export default class Cell {
         return this._bombNeighbors;
     }
 
+    set bombNeighbors(ammount: number) {
+        this._bombNeighbors = ammount;
+    }
+
     get isFlagged(): boolean {
         return this._isFlagged;
     }

@@ -16,4 +16,14 @@ describe("Map", () => {
         assert.strictEqual(bombs, 10);
     });
 
+    it("opens some spots and sweeps the map", () => {
+        // TODO: ahhhm something here
+        let myMap = new Map(8, 10, 5);
+        myMap.open(5, 5);
+        myMap.open(2, 2);
+        myMap.sweep();
+        myMap.chord();
+        myMap.print();
+    });
+
 });
