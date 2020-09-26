@@ -51,7 +51,6 @@ export default class GameScene extends Phaser.Scene {
                     }
                     // middle click chords
                     if (pointer.button == 1) {
-                        console.log("chord");
                         this.map.chord();
                     }
                     // right click flags
@@ -74,7 +73,21 @@ export default class GameScene extends Phaser.Scene {
             }
         }
     }
+
     frameFromCell(cell: Cell): number {
+        // special case: if the game is over, we show all bombs and errors
+        if (this.gameOver) {
+            if (cell.isBomb && ! cell.isFlagged) {
+                if (cell.isOpen) {
+                    return 12;
+                }
+                return 10;
+            }
+            if (cell.isFlagged && ! cell.isBomb) {
+                return 13;
+            }
+        }
+        // normal scenario:
         if (! cell.isOpen) {
             if (cell.isFlagged) {
                 return 11;
@@ -82,7 +95,7 @@ export default class GameScene extends Phaser.Scene {
             return 0;
         }
         if (cell.isBomb) {
-            return 10;
+            return 12; // should never arrive here, but just in case...
         }
         return cell.bombNeighbors + 1;
     }

@@ -171,6 +171,10 @@ export default class Map {
         if (cell.isOpen) {
             return;
         }
+        if (cell.isFlagged) {
+            console.log("Attempting to open a flagged cell!");
+            return;
+        }
         cell.setOpen();
         if (cell.isBomb) {
             // TODO: move this to a phaser event or something
