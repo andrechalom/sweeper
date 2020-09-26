@@ -34,7 +34,6 @@ export default class GameScene extends Phaser.Scene {
                 let mySprite = SpriteManager.makeSprite("tileset", 0, i, j, 0);
                 mySprite.setInteractive();
                 mySprite.on('pointerdown', (pointer: any) => {
-                    console.log(pointer)
                     if (this.gameOver) {
                         // no more interacting for you
                         return;
@@ -52,6 +51,7 @@ export default class GameScene extends Phaser.Scene {
                     }
                     // middle click chords
                     if (pointer.button == 1) {
+                        console.log("chord");
                         this.map.chord();
                     }
                     // right click flags
