@@ -1,4 +1,4 @@
-import "phaser";
+// import "phaser";
 // import MapGenerator from "./MapGenerator";
 // import SpriteManager from "./SpriteManager";
 
@@ -7,24 +7,24 @@ export default class Cell {
     private _isBomb = false;
     private _isFlagged = false;
     private _bombNeighbors = 0;
-    sprite: Phaser.GameObjects.Sprite;
+    // sprite: Phaser.GameObjects.Sprite;
     // map: MapGenerator;
 
     constructor() {
         // blank
     }
 
-    makeSprite(): void {
-        if (this.sprite === undefined) {
-            // this.sprite = SpriteManager.makeSprite("terrain", this.sprite_frame, this.x, this.y, 10);
-        }
-    }
+    // makeSprite(): void {
+    //     if (this.sprite === undefined) {
+    //         // this.sprite = SpriteManager.makeSprite("terrain", this.sprite_frame, this.x, this.y, 10);
+    //     }
+    // }
 
-    destroySprite(): void {
-        if (this.sprite !== undefined) {
-            this.sprite.destroy();
-        }
-    }
+    // destroySprite(): void {
+    //     if (this.sprite !== undefined) {
+    //         this.sprite.destroy();
+    //     }
+    // }
 
     get isOpen(): boolean {
         return this._isOpen;

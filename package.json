@@ -4,6 +4,8 @@
   "description": "Sweeper game",
   "main": "src/sweeper.ts",
   "scripts": {
+    "cli": "src/cli.ts",
+    "dev": "rollup --watch --config rollup.config.dev.js",
     "test": "mocha -r ts-node/register test/*.spec.ts -r jsdom-global/register",
     "nyc": "nyc mocha -r ts-node/register test/*.spec.ts -r jsdom-global/register"
   },

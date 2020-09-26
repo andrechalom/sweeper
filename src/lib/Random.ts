@@ -10,11 +10,13 @@ export default class Random {
         Random._seed = seed;
     }
 }
+let seed: number;
+if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    seed = parseInt(urlParams.get("seed"));
+}
 
-const urlParams = new URLSearchParams(window.location.search);
-let seed = parseInt(urlParams.get("seed"));
-
-if (Number.isNaN(seed)) {
+if (Number.isNaN(seed) || seed == undefined) {
     let date  = new Date();
     seed = Math.round(date.getTime() / 1000 | 0);
 }

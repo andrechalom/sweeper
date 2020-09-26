@@ -156,8 +156,12 @@ export default class Map {
         return this.sumInEveryTile((x, y) => this.getCell(x, y).isOpen ? 1 : 0);
     }
 
+    get targetOpen(): number {
+        return this.height * this.width - this.bombs;
+    }
+
     /**
-     * Marks the designalted location as open, and recurses into neighbors if possible.
+     * Marks the designated location as open, and recurses into neighbors if possible.
      * 
      * @param x X coordinate
      * @param y Y coordinate
@@ -224,6 +228,15 @@ export default class Map {
                 });
             }
         });
+    }
+
+    shallowSolve(): void {
+        let initialOpen = this.openCells;
+        this.sweep();
+        this.chord();
+        if (this.openCells !== initialOpen) {
+            this.shallowSolve();
+        }
     }
 
     // for debugging purposes
