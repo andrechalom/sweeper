@@ -28,10 +28,10 @@ describe("Map", () => {
         assert.strictEqual(myMap.openCells, 33); // cells opened and recursed
         myMap.sweep();
         assert.strictEqual(myMap.openCells, 33); // sweeping does not open cells
-        myMap.chord();
+        myMap.chordAll();
         assert.strictEqual(myMap.openCells, 73); // a lot of progress!
         myMap.sweep();
-        myMap.chord();
+        myMap.chordAll();
         myMap.sweep();
         assert.strictEqual(myMap.openCells, 75); // game completed!
         myMap.print();
