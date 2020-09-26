@@ -1,4 +1,6 @@
 export default class SpriteManager {
+    private static offset: {x: number, y: number};
+    private static tileSize: number;
     private static game: Phaser.Scene;
 
     /** 
@@ -6,6 +8,14 @@ export default class SpriteManager {
      */
     public static register(game: Phaser.Scene): void {
         SpriteManager.game = game;
+    }
+
+    public static setOffset(offset: {x: number, y: number}): void {
+        SpriteManager.offset = offset;
+    }
+
+    public static setTilesize(tileSize: number): void {
+        SpriteManager.tileSize = tileSize;
     }
 
     public static makeSprite(key: string, frame: number, x: integer, y: integer, depth: number): Phaser.GameObjects.Sprite {
@@ -21,10 +31,10 @@ export default class SpriteManager {
     }
 
     public static tileToWorldX(i: number): number {
-        return 32 * i;
+        return SpriteManager.tileSize * (i + SpriteManager.offset.x);
     }
 
     public static tileToWorldY(i: number): number {
-        return 32 * (i + 1);
+        return SpriteManager.tileSize * (i + SpriteManager.offset.y);
     }
 }

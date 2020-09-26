@@ -1,7 +1,7 @@
 import Layer from "./Layer";
-//import SpriteManager from "./SpriteManager";
 import Cell from "./Cell";
 import Random from "./Random";
+import EventManager from "./EventManager";
 
 export default class Map {
     // constant traits
@@ -90,10 +90,7 @@ export default class Map {
         return this._cells.get(x, y);
     }
 
-    constructor(/*game: GameScene, */ width: number, height: number, bombs: number) {
-        // initialize basic attributes
-        // this.game = game;
-        // creating a new map
+    constructor(width: number, height: number, bombs: number) {
         // basic checks
         if (width < 2 || height < 2 || width > 1000 || height > 1000) {
             throw new Error("Invalid map width or height: must be between 2 and 1000");
@@ -172,16 +169,13 @@ export default class Map {
             return;
         }
         if (cell.isFlagged) {
-            console.log("Attempting to open a flagged cell!");
             return;
         }
         cell.setOpen();
         if (cell.isBomb) {
-            // TODO: move this to a phaser event or something
-            console.log("GAME OVER BOOOM");
+            EventManager.sendGameOver();
         }
         // recursive open if this is a sweet zero
-        // TODO: actually if this flagged neighbours - bombneighbors = 0?
         if (cell.bombNeighbors === 0) {
             this.inRegion(x, y, 1, (xx, yy) => this.open(xx, yy));
         }
@@ -210,34 +204,41 @@ export default class Map {
     }
     
     /**
+     * Opens all neighbors that cannot be bombs
+     */
+    chord(x: number, y: number): void {
+        let cell = this.getCell(x, y);
+        if (!cell.isOpen) {
+            return;
+        }
+        let bombNeighbors = cell.bombNeighbors;
+        let flaggedNeighbors = this.sumInRegion(x, y, 1, (xx, yy) => {
+            return this.getCell(xx, yy).isFlagged ? 1 : 0;
+        });
+        if (bombNeighbors === flaggedNeighbors) {
+            // opens all non-flagged neighbors
+            this.inRegion(x, y, 1, (xx, yy) => {
+                let cell2 = this.getCell(xx, yy);
+                if (! cell2.isOpen && ! cell2.isFlagged) {
+                    this.open(xx, yy);
+                }
+            });
+        }
+    }
+
+    /**
      * Opens all cells that cannot be bombs
      */
-    chord(): void {
+    chordAll(): void {
         this.inEveryTile((x, y) => {
-            let cell = this.getCell(x, y);
-            if (!cell.isOpen) {
-                return;
-            }
-            let bombNeighbors = cell.bombNeighbors;
-            let flaggedNeighbors = this.sumInRegion(x, y, 1, (xx, yy) => {
-                return this.getCell(xx, yy).isFlagged ? 1 : 0;
-            });
-            if (bombNeighbors === flaggedNeighbors) {
-                // opens all non-flagged neighbors
-                this.inRegion(x, y, 1, (xx, yy) => {
-                    let cell2 = this.getCell(xx, yy);
-                    if (! cell2.isOpen && ! cell2.isFlagged) {
-                        this.open(xx, yy);
-                    }
-                });
-            }
+            this.chord(x, y);
         });
     }
 
     shallowSolve(): void {
         let initialOpen = this.openCells;
         this.sweep();
-        this.chord();
+        this.chordAll();
         if (this.openCells !== initialOpen) {
             this.shallowSolve();
         }

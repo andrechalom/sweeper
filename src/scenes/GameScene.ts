@@ -3,18 +3,21 @@ import Map from "../lib/Map";
 import Layer from "../lib/Layer";
 import SpriteManager from "../lib/SpriteManager";
 import Cell from "../lib/Cell";
+import EventManager from "../lib/EventManager";
 
 export default class GameScene extends Phaser.Scene {
+    config: {width: number; height: number, bombs: number};
     map: Map;
     sprites: Layer<Phaser.GameObjects.Sprite>;
     gameOver = false;
+    alien: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({key: "GameScene"});
     }
 
-    init(data: {width: number; height: number, bombs: number}): void {
-        this.map = new Map(data.width, data.height, data.bombs);
+    init(config: {width: number; height: number, bombs: number}): void {
+        this.config = config;
     }
 
     preload(): void {
@@ -23,9 +26,30 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create(): void {
-        // Initializes the sprite manager
+        // Initializes the managers
         SpriteManager.register(this);
+        EventManager.register(this);
+        SpriteManager.setTilesize(32);
+        SpriteManager.setOffset({x: (30 - this.config.width) / 2, y: 1.5});
 
+        this.alien = this.add.sprite(14.5 * 32, 5, "tileset", 16);
+        this.alien.setOrigin(0, 0);
+        this.alien.setInteractive();
+        this.alien.on("pointerdown", () => {
+            for (let i = 0; i < this.config.width; i++) {
+                for (let j = 0; j < this.config.height; j++) {
+                    this.sprites.get(i, j).destroy();
+                }
+            }
+            this.newgame();
+        });
+
+        this.newgame();
+    }
+
+    newgame(): void {
+        this.gameOver = false;
+        this.map = new Map(this.config.width, this.config.height, this.config.bombs);
         // Adds graphics and sets the terrain layer as "clickable"
         this.sprites = new Layer<Phaser.GameObjects.Sprite>(this.map.height, this.map.width);
         for (let i = 0; i < this.map.width; i++) {
@@ -45,13 +69,10 @@ export default class GameScene extends Phaser.Scene {
                             return;
                         }
                         this.map.open(i, j);
-                        if (this.map.getCell(i, j).isBomb) {
-                            this.gameOver = true;
-                        }
                     }
                     // middle click chords
                     if (pointer.button == 1) {
-                        this.map.chord();
+                        this.map.chord(i, j);
                     }
                     // right click flags
                     if (pointer.button == 2) {
@@ -62,6 +83,7 @@ export default class GameScene extends Phaser.Scene {
                 this.sprites.set(i, j, mySprite);
             }
         }
+        this.updateSprites();
     }
 
     updateSprites(): void {
@@ -72,6 +94,15 @@ export default class GameScene extends Phaser.Scene {
                 this.sprites.get(i, j).setFrame(frame);
             }
         }
+        if (this.gameOver) {
+            this.alien.setFrame(17);
+            return;
+        }
+        if (this.map.openCells == this.map.targetOpen) {
+            this.alien.setFrame(18);
+            return;
+        }
+        this.alien.setFrame(16);
     }
 
     frameFromCell(cell: Cell): number {
