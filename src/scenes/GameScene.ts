@@ -11,6 +11,7 @@ export default class GameScene extends Phaser.Scene {
     sprites: Layer<Phaser.GameObjects.Sprite>;
     gameOver = false;
     alien: Phaser.GameObjects.Sprite;
+    ai: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({key: "GameScene"});
@@ -34,7 +35,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.alien = this.add.sprite(14.5 * 32, 5, "tileset", 16);
         this.alien.setOrigin(0, 0);
-        this.alien.setInteractive();
+        this.alien.setInteractive({cursor: "pointer"});
         this.alien.on("pointerdown", () => {
             for (let i = 0; i < this.config.width; i++) {
                 for (let j = 0; j < this.config.height; j++) {
@@ -42,6 +43,14 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
             this.newgame();
+        });
+
+        this.ai = this.add.sprite(18.5 * 32, 5, "tileset", 14);
+        this.ai.setOrigin(0, 0);
+        this.ai.setInteractive({cursor: "pointer"});
+        this.ai.on("pointerdown", () => {
+            this.map.shallowSolve();
+            this.updateSprites();
         });
 
         this.newgame();

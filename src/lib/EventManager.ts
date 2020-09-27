@@ -15,7 +15,6 @@ export default class EventManager {
             // Not properly initialized!
             return;
         }
-        console.log("EVENT BOOM");
         this.game.gameOver = true;
     }
 }

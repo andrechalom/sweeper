@@ -8,6 +8,7 @@ export default class Map {
     private _height: number;
     private _width: number;
     private _bombs: number;
+    gameOver = false;
 
     // objects
     private _cells: Layer<Cell>;
@@ -173,6 +174,7 @@ export default class Map {
         }
         cell.setOpen();
         if (cell.isBomb) {
+            this.gameOver = true;
             EventManager.sendGameOver();
         }
         // recursive open if this is a sweet zero
@@ -242,6 +244,36 @@ export default class Map {
         if (this.openCells !== initialOpen) {
             this.shallowSolve();
         }
+    }
+
+    bestSolve(): void {
+        if (this.gameOver) {
+            return;
+        }
+        let initialOpen = this.openCells;
+        if (initialOpen === 0) {
+            // for first guess, we open a corner, which has a slightly better chance of being a zero
+            this.open(0, 0);
+            return this.bestSolve();
+        }
+        // currently, shallow solve is the best we have, but we will expand this
+        this.shallowSolve();
+        // pattern finding will go here
+        if (this.openCells === initialOpen) {
+            this.simpleGuess();
+        }
+        if (this.openCells !== this.targetOpen) {
+            this.bestSolve();
+        }
+    }
+
+    simpleGuess(): void {
+        let x: number, y: number;
+        do {
+            x = Math.floor(Random.get() * (this._width - 1));
+            y = Math.floor(Random.get() * (this._height - 1));
+        } while (this.getCell(x, y).isOpen);
+        this.open(x, y);
     }
 
     // for debugging purposes
